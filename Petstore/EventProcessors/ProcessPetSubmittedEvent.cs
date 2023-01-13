@@ -14,13 +14,13 @@ namespace Petstore.EventProcesssors
     /// <summary>
     /// Represents a service object that is going to do work
     /// </summary>
-    public class ProcessProductChangedEvents : IProcessPetSubmittedEvent
+    public class ProcessPetSubmittedEvent : IProcessPetSubmittedEvent
     {
         #region Fields
         private const string cRetryCount = "RetryCount";
         private const string cRedirectTopic = "RedirectTopic";
         private const string cGroupId = "GroupId";
-        private readonly ILogger<ProcessProductChangedEvents> _logger;
+        private readonly ILogger<ProcessPetSubmittedEvent> _logger;
         private readonly IOptionsSnapshot<KafkaPetSubmittedConfig> _kafkaPetSubmittedConfig;
         private readonly IKafkaFactory<Pet> _kafkaFactory;
         private readonly IOptionsSnapshot<ConsumerConfig> _consumerConfig;
@@ -42,7 +42,7 @@ namespace Petstore.EventProcesssors
         /// <param name="productMapContext">EF for Product Changeds</param>
         /// <param name="consumerConfig">Kafka Consumer Configuration</param>
         /// <param name="kafkaMessageService">Kafka Message Service</param>
-        public ProcessProductChangedEvents(ILogger<ProcessProductChangedEvents> logger,
+        public ProcessPetSubmittedEvent(ILogger<ProcessPetSubmittedEvent> logger,
                                              IOptionsSnapshot<KafkaPetSubmittedConfig> kafkaInternalProductChangedConfig,
                                              IKafkaFactory<Pet> kafkaFactory,
                                              IOptionsSnapshot<ConsumerConfig> consumerConfig)
@@ -62,7 +62,7 @@ namespace Petstore.EventProcesssors
         /// <returns>Task</returns>
         public async Task ListenAndProcessEventsAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("{service} Main processor started at: {time}", nameof(ProcessProductChangedEvents), DateTimeOffset.UtcNow);
+            _logger.LogInformation("{service} Main processor started at: {time}", nameof(ProcessPetSubmittedEvent), DateTimeOffset.UtcNow);
 
             await AddATestMessage();
 
@@ -106,7 +106,7 @@ namespace Petstore.EventProcesssors
                 finally
                 {
                     consumer.Close();
-                    _logger.LogInformation("{service} Main processor stopped at: {time}", nameof(ProcessProductChangedEvents), DateTimeOffset.UtcNow);
+                    _logger.LogInformation("{service} Main processor stopped at: {time}", nameof(ProcessPetSubmittedEvent), DateTimeOffset.UtcNow);
                 }
             }
         }

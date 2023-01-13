@@ -1,5 +1,9 @@
+using Confluent.Kafka;
+using Confluent.SchemaRegistry;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
+using Petstore.EventProcesssors;
+using Petstore.Kafka;
 using System.Text.Json.Serialization;
 
 namespace InternalOrderformService
@@ -45,6 +49,17 @@ namespace InternalOrderformService
                 o.Title = _ServiceTitle;
                 o.Description = _ServiceDesc;
             });
+
+            // configuration
+            services
+                .Configure<KafkaPetSubmittedConfig>(Configuration.GetSection(nameof(KafkaPetSubmittedConfig)))
+                .Configure<ConsumerConfig>(Configuration.GetSection("KafkaConsumerConfig"))
+                .Configure<ProducerConfig>(Configuration.GetSection("KafkaProducerConfig"))
+                .Configure<SchemaRegistryConfig>(Configuration.GetSection("KafkaSchemaRegistryConfig"));
+
+            services
+                .AddHostedService<MainKafkaTopicBkgSvc>()
+                .AddScoped<IProcessPetSubmittedEvent, ProcessPetSubmittedEvent>();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
